@@ -16,7 +16,8 @@ class TimeseriesVisualizer():
                                t_key_rule="exact", d_col_pattern=None,
                                t_label="", d_label="", title=None):
         num_rows, num_cols = len(t_keys), len(d_cols)
-        fig, axs = plt.subplots(num_rows, num_cols, figsize=(5 * num_rows, 5 * num_cols), squeeze=False)
+        fig, axs = plt.subplots(num_rows, num_cols, 
+                                figsize=(5 * num_rows, 5 * num_cols), squeeze=False)
         for i in range(num_cols):
             d_col = d_cols[i]
             for j in range(num_rows):
@@ -24,12 +25,17 @@ class TimeseriesVisualizer():
                 axs[j, i].set_title("%s %s" % (d_col, t_key))
                 axs[j, i].grid(False)
                 timeseries_vals = \
-                    self.__extract_timeseries_vals(t_col, d_col, t_key, t_key_rule, d_col_pattern)
+                    self.__extract_timeseries_vals(t_col, d_col, 
+                                                   t_key, t_key_rule, 
+                                                   d_col_pattern)
                 valid_idx = np.isfinite(timeseries_vals)
                 valid_timeseries_vals = timeseries_vals[valid_idx]
-                m, b = np.polyfit(range(len(valid_timeseries_vals)), valid_timeseries_vals, 1)
-                axs[j, i].scatter(range(len(timeseries_vals)), timeseries_vals)
-                axs[j, i].plot(range(len(timeseries_vals)), m * range(len(timeseries_vals)) + b)
+                m, b = np.polyfit(range(len(valid_timeseries_vals)), 
+                                  valid_timeseries_vals, 1)
+                axs[j, i].scatter(range(len(timeseries_vals)), 
+                                  timeseries_vals)
+                axs[j, i].plot(range(len(timeseries_vals)), 
+                               m * range(len(timeseries_vals)) + b)
         
         if title is None:
             title = "DISTRIBUTION" \
