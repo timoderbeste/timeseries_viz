@@ -9,10 +9,12 @@ def main():
     time_viz = TimeseriesVisualizer(data_path, plt_style="ggplot")
     time_viz.visualize_distribution(
         t_col="LOCAL_DATE", 
-        d_cols=["CALGARY", "TORONTO"], 
+        d_cols=["CALGARY", "TORONTO", "VANCOUVER"], 
         t_keys=["01-Jan", "02-Feb"],
         t_key_rule="contains",
         d_col_pattern="MEAN_TEMPERATURE_%s",
+        t_label="Year",
+        d_label="Mean Temperature",
         save_path=os.path.join(data_dir, "distribution_plot.png"),
         show_plot=True,
     )

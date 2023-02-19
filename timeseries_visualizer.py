@@ -23,9 +23,17 @@ class TimeseriesVisualizer():
                                title=None, save_path=None, show_plot=False):
         num_rows, num_cols = len(t_keys), len(d_cols)
         fig, axs = plt.subplots(num_rows, num_cols, 
-                                figsize=(5 * num_rows, 5 * num_cols), squeeze=False)
+                                figsize=(5 * num_cols, 5 * num_rows), 
+                                sharex=True,
+                                sharey=True,
+                                squeeze=False)
+        fig.add_subplot(111, frameon=False)
+        plt.tick_params(labelcolor="none", 
+                        top=False, bottom=False, left=False, right=False)
+        plt.xlabel(t_label)
+        plt.ylabel(d_label)
         for i in range(num_cols):
-            d_col = d_cols[i]
+            d_col = d_cols[i] 
             for j in range(num_rows):
                 t_key = t_keys[j]
                 axs[j, i].set_title("%s %s" % (d_col, t_key))
