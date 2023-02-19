@@ -5,16 +5,22 @@ from scipy.stats import pearsonr
 
 
 class TimeseriesVisualizer():
-    def __init__(self, file_path: str, file_type: str = "csv"):
+    def __init__(self, 
+                 file_path: str, 
+                 file_type: str = "csv",
+                 plt_style="default"):
         if file_type == "csv":
             self.df = pd.read_csv(file_path)
         else:
             raise NotImplementedError
         
+        plt.style.use(plt_style)
+        
     def visualize_distribution(self,
                                t_col, d_cols, t_keys,
                                t_key_rule="exact", d_col_pattern=None,
-                               t_label="", d_label="", title=None):
+                               t_label="", d_label="", 
+                               title=None, save_path=None, show_plot=False):
         num_rows, num_cols = len(t_keys), len(d_cols)
         fig, axs = plt.subplots(num_rows, num_cols, 
                                 figsize=(5 * num_rows, 5 * num_cols), squeeze=False)
@@ -42,7 +48,12 @@ class TimeseriesVisualizer():
                 if not d_col_pattern \
                 else "%s DISTRIBUTION" % d_col_pattern.replace("%s", "").strip("-_ ")
         fig.suptitle(title)
-        fig.show()
+
+        if show_plot:
+            fig.show()
+        if save_path is not None:
+            fig.savefig(save_path)
+        fig.clf()
     
     def __extract_timeseries_vals(self, t_col, d_col, t_key, t_key_rule, d_col_pattern):
         if t_key is not None:

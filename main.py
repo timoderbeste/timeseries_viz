@@ -1,16 +1,23 @@
-# This is a sample Python script.
+import os
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+from timeseries_visualizer import TimeseriesVisualizer
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+def main():
+    data_dir = "/Users/timowang/Data/data/time-series-canadian-climate-history/"
+    data_path = os.path.join(data_dir, "Canadian_climate_history.csv")
+    time_viz = TimeseriesVisualizer(data_path, plt_style="ggplot")
+    time_viz.visualize_distribution(
+        t_col="LOCAL_DATE", 
+        d_cols=["CALGARY", "TORONTO"], 
+        t_keys=["01-Jan", "02-Feb"],
+        t_key_rule="contains",
+        d_col_pattern="MEAN_TEMPERATURE_%s",
+        save_path=os.path.join(data_dir, "distribution_plot.png"),
+        show_plot=True,
+    )
+    
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+if __name__ == "__main__":
+    main()
