@@ -19,7 +19,7 @@ class TimeseriesVisualizer():
     def visualize_distribution(self,
                                t_col, t_keys, d_cols,
                                t_key_rule="exact", d_col_pattern=None,
-                               x_label="", y_label="", 
+                               x_label="", y_label="", x_ticks=None,
                                title=None, save_path=None, show_plot=False):
         num_rows, num_cols, fig, axs = \
             self.__initialize_2d_subplots(t_keys, d_cols, x_label, y_label)
@@ -33,15 +33,29 @@ class TimeseriesVisualizer():
                     self._extract_timeseries_vals(t_col, t_key,
                                                   d_col, t_key_rule, 
                                                   d_col_pattern)
+                num_timeseries_vals = len(timeseries_vals)
+                
                 valid_idx = np.isfinite(timeseries_vals)
                 valid_timeseries_vals = timeseries_vals[valid_idx]
-                m, b = np.polyfit(range(len(valid_timeseries_vals)), 
+                num_valid_timeseries_vals = len(valid_timeseries_vals)
+                valid_x_ticks = None
+                if x_ticks is not None:
+                    valid_x_ticks = x_ticks[:num_timeseries_vals][valid_idx]
+
+                m, b = np.polyfit(valid_x_ticks if valid_x_ticks is not None else \
+                                  range(num_valid_timeseries_vals), 
                                   valid_timeseries_vals, 1)
-                axs[j, i].scatter(range(len(timeseries_vals)), 
+                
+                axs[j, i].scatter(x_ticks[:num_timeseries_vals] \
+                                  if x_ticks is not None else range(num_timeseries_vals), 
                                   timeseries_vals)
-                axs[j, i].plot(range(len(timeseries_vals)), 
-                               m * range(len(timeseries_vals)) + b)
-        
+                
+                if x_ticks is None:
+                    axs[j, i].plot(range(num_timeseries_vals), 
+                                   m * range(num_timeseries_vals) + b)
+                else:
+                    axs[j, i].plot(x_ticks[:num_timeseries_vals],
+                                   m * x_ticks[:num_timeseries_vals] + b)
         if title is None:
             title = "DISTRIBUTION" \
                 if not d_col_pattern \
@@ -58,7 +72,7 @@ class TimeseriesVisualizer():
     def visualize_outliers(self,
                            t_col, t_keys, d_cols,
                            t_key_rule="exact", d_col_pattern=None,
-                           x_label="", y_label="", 
+                           x_label="", y_label="", x_ticks=None,
                            title=None, save_path=None, show_plot=False):
         num_rows, fig, axs = \
             self.__initialize_1d_subplots(d_cols, x_label, y_label)
@@ -74,7 +88,9 @@ class TimeseriesVisualizer():
                                                   d_col, t_key_rule, 
                                                   d_col_pattern)
                 t_key2timeseries_vals[t_key] = timeseries_vals
-            axs[i, 0].boxplot(x=t_key2timeseries_vals.values())
+            axs[i, 0].boxplot(x=t_key2timeseries_vals.values(), labels=x_ticks)
+            # if x_ticks is not None:
+            #     axs[i, 0].set_xticks(np.arange(len(t_keys)), x_ticks)
         
         if title is None:
             title = "OUTLIERS" \

@@ -1,5 +1,7 @@
 import os
 
+import numpy as np
+
 from timeseries_visualizer import TimeseriesVisualizer
 
 
@@ -15,6 +17,7 @@ def main():
         d_col_pattern="MEAN_TEMPERATURE_%s",
         x_label="Year",
         y_label="Mean Temperature",
+        x_ticks=np.arange(1940, 2021),
         save_path=os.path.join(data_dir, "distribution_plot.png"),
         show_plot=True,
     )
@@ -31,8 +34,11 @@ def main():
         ],
         t_key_rule="contains",
         d_col_pattern="MEAN_TEMPERATURE_%s",
+        title="Outliers of Mean Temperature over the Past 80 Years",
         x_label="Month of the year",
         y_label="Mean Temperatures",
+        x_ticks=["01-Jan", "01-Feb", "01-Mar", "01-Apr", "01-May", "01-Jun",
+                "01-Jul", "01-Aug", "01-Sep", "01-Oct", "01-Nov", "01-Dec"],
         save_path=os.path.join(data_dir, "outliers_plot.png"),
     )
 
