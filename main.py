@@ -1,16 +1,17 @@
-# This is a sample Python script.
-
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+from timeseries_visualizer import TimeseriesVisualizer
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+def main():
+    vizer = TimeseriesVisualizer(
+        "/Users/timowang/Downloads/time-series-canadian-climate-history/Canadian_climate_history.csv")
+    
+    vizer.visualize_distribution("LOCAL_DATE",
+                                 ["CALGARY", "TORONTO"],
+                                 ["01-Jan", "01-Feb"],
+                                 t_key_rule="contains",
+                                 d_col_pattern="MEAN_TEMPERATURE_%s")
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    main()
