@@ -105,24 +105,42 @@ class TimeseriesVisualizer():
         fig.clf()
 
 
-    # def visualize_correlations(self,
-    #                            t_col, t_keys, 
-    #                            d_cols1, d_cols2, 
-    #                            t_key_rule="exact", 
-    #                            d_col_pattern1=None, d_col_pattern2=None,
-    #                            x_label="", y_label="",
-    #                            title=None, save_path=None, show_plot=False):
-    #     def compute_correlations_for_t_key(t_key):
-    #         d_col1_data = []
-    #         d_col2_data = []
-    #         for d_col1 in d_cols1:
-    #             d_col1_data.extend(self._extract_timeseries_vals(
-    #                 t_col=t_col,
-    #                 t_key=t_key,
-    #                 d_col=d_col1,
+    def visualize_correlations(self,
+                               t_col, t_keys,
+                               d_cols1, d_cols2,
+                               t_key_rule="exact",
+                               d_col_pattern1=None, d_col_pattern2=None,
+                               x_label="", y_label="",
+                               title=None, save_path=None, show_plot=False):
+        def compute_correlations_for_t_key(t_key):
+            d_col12data = dict()
+            for d_col1 in d_cols1:
+                d_col12data[d_col1] = self._extract_timeseries_vals(
+                    t_col=t_col,
+                    t_key=t_key,
+                    d_col=d_col1,
+                    t_key_rule="contains",
+                    d_col_pattern=d_col_pattern1,
+                    drop_na=False
+                )
+            d_col22data = dict()
+            for d_col2 in d_cols2:
+                d_col22data[d_col2] = self._extract_timeseries_vals(
+                    t_col=t_col,
+                    t_key=t_key,
+                    d_col=d_col2,
+                    t_key_rule="contains",
+                    d_col_pattern=d_col_pattern2,
+                    drop_na=False
+                )
+            assert d_col12data.keys() == d_col22data.keys()
+            print("d_col12data", d_col12data)
+            print("d_col22data", d_col22data)
+            valid_d_col1_data = []
+            valid_d_col2_data = []
 
-    #             ))
-    #     pass
+        compute_correlations_for_t_key(t_keys[0])
+        pass
     
     def _extract_timeseries_vals(self, t_col, t_key, d_col, 
                                  t_key_rule, d_col_pattern, drop_na=True):
