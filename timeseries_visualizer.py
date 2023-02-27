@@ -89,8 +89,6 @@ class TimeseriesVisualizer():
                                                   d_col_pattern)
                 t_key2timeseries_vals[t_key] = timeseries_vals
             axs[i, 0].boxplot(x=t_key2timeseries_vals.values(), labels=x_ticks)
-            # if x_ticks is not None:
-            #     axs[i, 0].set_xticks(np.arange(len(t_keys)), x_ticks)
         
         if title is None:
             title = "OUTLIERS" \
@@ -107,40 +105,71 @@ class TimeseriesVisualizer():
 
     def visualize_correlations(self,
                                t_col, t_keys,
-                               d_cols1, d_cols2,
+                               d_cols,
                                t_key_rule="exact",
                                d_col_pattern1=None, d_col_pattern2=None,
-                               x_label="", y_label="",
+                               x_label="", y_label="", x_ticks=None,
                                title=None, save_path=None, show_plot=False):
+        if d_col_pattern1 is None or d_col_pattern2 is None:
+            raise AssertionError("d_col_pattern1 and d_col_pattern2 cannot be None")
         def compute_correlations_for_t_key(t_key):
-            d_col12data = dict()
-            for d_col1 in d_cols1:
-                d_col12data[d_col1] = self._extract_timeseries_vals(
+            d_col2data1 = dict()
+            for d_col in d_cols:
+                d_col2data1[d_col] = self._extract_timeseries_vals(
                     t_col=t_col,
                     t_key=t_key,
-                    d_col=d_col1,
+                    d_col=d_col,
                     t_key_rule="contains",
                     d_col_pattern=d_col_pattern1,
                     drop_na=False
                 )
-            d_col22data = dict()
-            for d_col2 in d_cols2:
-                d_col22data[d_col2] = self._extract_timeseries_vals(
+            d_col2data2 = dict()
+            for d_col in d_cols:
+                d_col2data2[d_col] = self._extract_timeseries_vals(
                     t_col=t_col,
                     t_key=t_key,
-                    d_col=d_col2,
+                    d_col=d_col,
                     t_key_rule="contains",
                     d_col_pattern=d_col_pattern2,
                     drop_na=False
                 )
-            assert d_col12data.keys() == d_col22data.keys()
-            print("d_col12data", d_col12data)
-            print("d_col22data", d_col22data)
-            valid_d_col1_data = []
-            valid_d_col2_data = []
+            assert len(d_col2data1[d_cols[0]]) == len(d_col2data2[d_cols[0]])
+            correlations = []
+            
+            for i in range(len(d_col2data1[d_cols[0]])):
+                d_col_data1 = []
+                d_col_data2 = []
+                for d_col in d_cols:
+                    if np.isnan(d_col2data1[d_col][i]) or np.isnan(d_col2data2[d_col][i]):
+                        continue
+                    d_col_data1.append(d_col2data1[d_col][i])
+                    d_col_data2.append(d_col2data2[d_col][i])
 
-        compute_correlations_for_t_key(t_keys[0])
-        pass
+                correlations.append(pearsonr(d_col_data1, d_col_data2)[0])
+            return correlations
+
+        num_rows, fig, axs = \
+            self.__initialize_1d_subplots(t_keys, x_label, y_label)
+        for i in range(num_rows):
+            t_key = t_keys[i]
+            correlations = compute_correlations_for_t_key(t_key)
+            axs[i, 0].set_title("%s" % t_key)
+            axs[i, 0].grid(False)
+            if x_ticks is None:
+                axs[i, 0].plot(correlations)
+            else:
+                axs[i, 0].plot(x_ticks, correlations)
+        
+        if title is None:
+            title = "Correlation between %s and %s" \
+                    % (d_col_pattern1.replace("%s", "").strip("_- "), d_col_pattern2.replace("%s", "").strip("_- "))
+        fig.suptitle(title)
+        if show_plot:
+            fig.show()
+            
+        if save_path is not None:
+            fig.savefig(save_path)
+        fig.clf()
     
     def _extract_timeseries_vals(self, t_col, t_key, d_col, 
                                  t_key_rule, d_col_pattern, drop_na=True):
@@ -163,7 +192,7 @@ class TimeseriesVisualizer():
                 print("d_col_pattern", d_col_pattern)
                 exit(1)
             return np.array(df[formatted_d_col].dropna()) \
-                if drop_na else np.array(df[formatted_d_col].dropna())
+                if drop_na else np.array(df[formatted_d_col])
         else:
             return np.array(df[d_col].dropna()) \
                 if drop_na else np.array(df[d_col])
