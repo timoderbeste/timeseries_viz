@@ -6,7 +6,7 @@ from timeseries_visualizer import TimeseriesVisualizer
 
 
 def main():
-    data_dir = "/Users/timowang/Daten/data/time-series-canadian-climate-history/"
+    data_dir = "/Users/timowang/Data/data/time-series-canadian-climate-history/"
     data_path = os.path.join(data_dir, "Canadian_climate_history.csv")
     time_viz = TimeseriesVisualizer(data_path, plt_style="ggplot")
     time_viz.visualize_correlations(
@@ -33,7 +33,6 @@ def main():
         save_path=os.path.join(data_dir, "distribution_plot.png"),
         show_plot=True,
     )
-
     time_viz.visualize_outliers(
         t_col="LOCAL_DATE",
         t_keys=["01-Jan", "01-Feb", "01-Mar", "01-Apr", "01-May", "01-Jun",
@@ -42,7 +41,6 @@ def main():
         "TORONTO",
         "VANCOUVER",
         "CALGARY",
-        "HALIFAX"
         ],
         t_key_rule="contains",
         d_col_pattern="MEAN_TEMPERATURE_%s",
