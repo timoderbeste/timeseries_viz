@@ -63,6 +63,4 @@ time_viz.visualize_correlations(
   save_path=os.path.join(data_dir, "correlation_plot.png")
 )
 ```
-<img width="425" alt="image" src="https://user-images.githubusercontent.com/7350056/223292298-8f798acb-85bc-469a-8188-54db9cbfde90.png">
-
 <img width="361" alt="image" src="https://user-images.githubusercontent.com/7350056/223292306-c6e1de28-7959-438f-9605-b01c7f8d84ed.png">
